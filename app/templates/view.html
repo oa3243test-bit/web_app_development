@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="mb-3">
+            <a href="{{ url_for('books.index') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">&larr; 返回列表</a>
+        </div>
+        
+        <div class="card shadow border-0 rounded-4 overflow-hidden">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4">
+                    <div class="mb-3 mb-md-0">
+                        <h1 class="card-title fw-bold mb-1">{{ book.title }}</h1>
+                        <h4 class="text-warning mt-2 mb-0">
+                            {% for _ in range(book.rating) %}★{% endfor %}{% for _ in range(5 - book.rating) %}☆{% endfor %}
+                            <span class="text-muted fs-6 ms-2">({{ book.rating }} 星)</span>
+                        </h4>
+                    </div>
+                    <div class="text-md-end text-muted small bg-light p-2 rounded">
+                        <p class="mb-0"><strong>建立時間</strong><br>{{ book.created_at }}</p>
+                    </div>
+                </div>
+
+                <div class="bg-light p-4 rounded-3 mb-4">
+                    <div class="content" style="white-space: pre-wrap; line-height: 1.8; font-size: 1.1rem; color: #333;">{{ book.review }}</div>
+                </div>
+                
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{{ url_for('books.edit_form', book_id=book.id) }}" class="btn btn-primary px-4 fw-bold">編輯內容</a>
+                    <!-- 刪除按鈕觸發 Modal -->
+                    <button type="button" class="btn btn-outline-danger px-4" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        刪除
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 刪除確認 Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-danger text-white border-0">
+        <h5 class="modal-title fw-bold" id="deleteModalLabel">⚠️ 確認刪除</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4 fs-5">
+        確定要刪除「<strong>{{ book.title }}</strong>」這篇筆記嗎？<br>
+        <span class="text-danger small">此操作無法復原。</span>
+      </div>
+      <div class="modal-footer border-0 bg-light">
+        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">取消</button>
+        <form action="{{ url_for('books.delete_book', book_id=book.id) }}" method="POST" class="m-0">
+            <button type="submit" class="btn btn-danger px-4 fw-bold">確定刪除</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
